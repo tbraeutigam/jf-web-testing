@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 
+import { ConfigService } from '../../services/config.service';
+
+
 @Component({
   selector: 'app-landing-screen',
   templateUrl: './landing-screen.component.html',
@@ -10,11 +13,12 @@ export class LandingScreenComponent implements OnInit {
   private itemsInprogressNew = [];
   private userLibraries = [];
 
-  constructor(private apiService: ApiService) { }
+  constructor(private apiService: ApiService,
+    private configService: ConfigService,) { }
 
   ngOnInit() {
-    let server = 'https://jellyfin.media.braeutigam.tech/emby';
-    let user = '5a613f8ab43645bc8f24b4443b11c94a';
+    let server = this.configService.getServer();
+    let user = this.configService.getUser();
     
     this.apiService.getUserLibraries(user)
                    .subscribe((data: {} ) => {

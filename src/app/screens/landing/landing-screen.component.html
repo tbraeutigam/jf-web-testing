@@ -4,7 +4,7 @@
 
     <div class="clr-row">
       <div *ngFor="let i of userLibraries" class="clr-col-xl-2 clr-col-lg-4 clr-col-md-6 clr-col-12" id="item-display-{{i.Id}}">
-          <a routerLink="/{{i.CollectionType}}/library/{{i.Id}}" class="clickable">
+          <a routerLink="/{{i.CollectionType}}/libraries/{{i.Id}}" class="clickable">
               <div class="card">
                   <div class="card-img">
                       <img src="https://jellyfin.media.braeutigam.tech/emby/Items/{{i.Id}}/Images/Primary">

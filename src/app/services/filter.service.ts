@@ -18,7 +18,9 @@ export class FilterService {
       genres: [],
       parentalRatings: [],
       years: [],
-      tags: []
+      tags: [],
+      matchAll: ['genres', 'tags'],
+      matchAny: ['parentalRatings', 'years', 'libraries']
     },
     tvshows: {},
     clips: {},
@@ -81,7 +83,9 @@ export class FilterService {
         genres: [],
         parentalRatings: [],
         years: [],
-        tags: []
+        tags: [],
+        matchAll: ['genres', 'tags'],
+        matchAny: ['parentalRatings', 'years', 'libraries']
       },
       tvshows: {},
       clips: {},
@@ -96,33 +100,37 @@ export class FilterService {
 
   public filterList(type: string,  items: any[]) {
     
-    let f = this.filters[type];
-    console.log(f)
-    
     for (let i in items){
       items[i].show = false;
-      if (f.status.watched   && !items[i].watched ) continue;
-      if (f.status.paused    && !items[i].paused  ) continue;
-      if (f.status.unwatched &&  items[i].watched ) continue;
-      if (f.status.favorite  && !items[i].favorite) continue;
+      if (this.filters[type].status.watched   && !items[i].watched ) continue;
+      if (this.filters[type].status.paused    && !items[i].paused  ) continue;
+      if (this.filters[type].status.unwatched &&  items[i].watched ) continue;
+      if (this.filters[type].status.favorite  && !items[i].favorite) continue;
 
       let matches = false;
 
-      // Library Filtering: Matching *ANY* of selected Libraries
-      if (f.libraries.length > 0){
-        for (let x of f.libraries){
-          if (items[i].trueParent == x){
-            matches = true;
-            break;
+      // *ANY* Matching
+      for (let r of this.filters[type].matchAny){
+        if (this.filters[type][r] && this.filters[type][r].length  > 0){
+          let t = r == 'libraries' ? 'trueParent' : r;
+              t = r == 'years' ? 'year' : r;
+              t = r == 'parentalRatings' ? 'parentalRating' : r;
+          for (let x of this.filters[type][r]){
+            if(items[i][t] == x){
+              matches = true;
+              break;
+            }
           }
+          if (!matches) break;
         }
-        if (!matches) continue;
-        matches = false;
+          matches = true;
       }
+      if (!matches) continue;
+      matches = false;
 
       // Genre Filtering: Need to match *ALL* selected genres
-      if (f.genres && f.genres.length > 0){
-        for (let x of f.genres){
+      if (this.filters[type].genres && this.filters[type].genres.length > 0){
+        for (let x of this.filters[type].genres){
           if (!items[i].genres.includes(x)){
             matches = false;
             break
@@ -135,33 +143,9 @@ export class FilterService {
         matches = false; 
       }
 
-      // Parental Rating Filtering: Matching *ANY* of selected ratings
-      if (f.parentalRatings && f.parentalRatings.length > 0){
-        for (let x of f.parentalRatings){
-          if (items[i].parentalRating == x){
-            matches = true;
-            break;
-          }
-        }
-        if (!matches) continue;
-        matches = false;
-      }
-
-      // Year Filtering: Matching *ANY* of selected years
-      if (f.years && f.years.length > 0){
-        for (let x of f.years){
-          if (items[i].year == x){
-            matches = true;
-            break;
-          }
-        }
-        if (!matches) continue;
-        matches = false;
-      }
-      
       // Tag Filtering: Need to match *ALL* selected tags
-      if (f.tags && f.tags.length > 0){
-        for (let x of f.tags){
+      if (this.filters[type].tags && this.filters[type].tags.length > 0){
+        for (let x of this.filters[type].tags){
           if (!items[i].tags.includes(x)){
             matches = false;
             break

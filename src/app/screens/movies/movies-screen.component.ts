@@ -1,7 +1,6 @@
 // Angular Imports
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Location } from '@angular/common';
 
 // Custom Imports
 import { ApiService } from '../../services/api.service';
@@ -36,8 +35,8 @@ export class MoviesScreenComponent implements OnInit {
   constructor(private apiService: ApiService,
     private f: FilterService,
     private configService: ConfigService,
-    private route: ActivatedRoute,
-    private location: Location) { }
+    private route: ActivatedRoute
+  ) { }
 
   resetFilters(){
     if (this.f.resetFilters('movies')){
