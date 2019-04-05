@@ -38,7 +38,7 @@
         </div>
       </div>
   <clr-vertical-nav [clrVerticalNavCollapsible]="true" [(clrVerticalNavCollapsed)]="collapsed" [clr-nav-level]="2">
-    <a clrVerticalNavLink *ngIf="libraryInfo.available.length != 1" routerLink="/movies" [ngClass]="selectedEntry['main-all-libraries'] ? 'active' : ''">
+    <a clrVerticalNavLink *ngIf="libraryInfo.available.length != 1" routerLink="/movies" [ngClass]="active.special['libraries-all'] ? 'active' : ''">
       <clr-icon clrVerticalNavIcon shape="video-gallery"></clr-icon> All Libraries
     </a>
     <ng-container *ngIf="libraryInfo.available.length != 1">
@@ -52,32 +52,32 @@
     <div class="nav-divider" *ngIf="libraryInfo.available.length != 1"></div>
  
     <a clrVerticalNavLink
-      (click)="updateFilterSingle('status', 'paused'); selectedEntry['main-paused']=!selectedEntry['main-paused']"
-      [ngClass]="selectedEntry['main-paused'] ? 'active' : ''">
+      (click)="updateFilterSingle('status', 'paused'); active.filters['status-paused']=!active.filters['status-paused']"
+      [ngClass]="active.filters['status-paused'] ? 'active' : ''">
       <clr-icon
         shape="pause"
-        [ngClass]="selectedEntry['main-paused'] ? 'is-solid' : ''"></clr-icon>   Paused </a>
+        [ngClass]="active.filters['status-paused'] ? 'is-solid' : ''"></clr-icon>   Paused </a>
     
     <a clrVerticalNavLink
-      (click)="updateFilterSingle('status', 'unwatched'); selectedEntry['main-unwatched']=!selectedEntry['main-unwatched']"
-      [ngClass]="selectedEntry['main-unwatched'] ? 'active' : ''">
+      (click)="updateFilterSingle('status', 'unwatched'); active.filters['status-unwatched']=!active.filters['status-unwatched']"
+      [ngClass]="active.filters['status-unwatched'] ? 'active' : ''">
       <clr-icon
         shape="eye-hide"
-        [ngClass]="selectedEntry['main-unwatched'] ? 'is-solid' : ''"></clr-icon>Unwatched </a>
+        [ngClass]="active.filters['status-unwatched'] ? 'is-solid' : ''"></clr-icon>Unwatched </a>
 
     <a clrVerticalNavLink
-      (click)="updateFilterSingle('status', 'watched'); selectedEntry['main-watched']=!selectedEntry['main-watched']"
-      [ngClass]="selectedEntry['main-watched'] ? 'active' : ''">
+      (click)="updateFilterSingle('status', 'watched'); active.filters['status-watched']=!active.filters['status-watched']"
+      [ngClass]="active.filters['status-watched'] ? 'active' : ''">
       <clr-icon
       shape="eye"
-      [ngClass]="selectedEntry['main-watched'] ? 'is-solid' : ''"></clr-icon>    Watched </a>
+      [ngClass]="active.filters['status-watched'] ? 'is-solid' : ''"></clr-icon>    Watched </a>
 
     <a clrVerticalNavLink
-      (click)="updateFilterSingle('status', 'favorite'); selectedEntry['main-favorite']=!selectedEntry['main-favorite']"
-      [ngClass]="selectedEntry['main-favorite'] ? 'active' : ''">
+      (click)="updateFilterSingle('status', 'favorite'); active.filters['status-favorite']=!active.filters['status-favorite']"
+      [ngClass]="active.filters['status-favorite'] ? 'active' : ''">
       <clr-icon
         shape="star"
-        [ngClass]="selectedEntry['main-favorite'] ? 'is-solid' : ''"></clr-icon> Favorites </a>
+        [ngClass]="active.filters['status-favorite'] ? 'is-solid' : ''"></clr-icon> Favorites </a>
 
     <div class="nav-divider"></div>
     <a clrVerticalNavLink (click)="resetFilters()">
@@ -90,49 +90,49 @@
         <clr-vertical-nav-group-children>
           <a *ngFor="let i of libraryInfo.available"
             clrVerticalNavLink
-            (click)="updateFilterSingle('library', i.id); selectedEntry[i.id]=!selectedEntry[i.id]"
-            [ngClass]="selectedEntry[i.id] ? 'active' : ''"> {{i.name}}
+            (click)="updateFilterSingle('library', i.id); active.filters['library-' + i.id]=!active.filters['library-' + i.id]"
+            [ngClass]="active.filters['library-' + i.id] ? 'active' : ''"> {{i.name}}
           </a>
         </clr-vertical-nav-group-children>
     </clr-vertical-nav-group>
 
-    <clr-vertical-nav-group *ngIf="selectedEntry['filters-genres']">
+    <clr-vertical-nav-group *ngIf="active.special['category-genres']">
       <clr-icon shape="list" clrVerticalNavIcon></clr-icon> Genres
       <clr-vertical-nav-group-children>
-          <a *ngFor="let i of filters.genres"
+          <a *ngFor="let i of f.listItems.movies.genres"
             clrVerticalNavLink
-            (click)="updateFilterSingle('genres', i); selectedEntry[i]=!selectedEntry[i]"
-            [ngClass]="selectedEntry[i] ? 'active' : ''"> {{i}} </a>
+            (click)="updateFilterSingle('genres', i); active.filters['genre-' + i]=!active.filters['genre-' + i]"
+            [ngClass]="active.filters['genre-' + i] ? 'active' : ''"> {{i}} </a>
       </clr-vertical-nav-group-children>
     </clr-vertical-nav-group>
 
-    <clr-vertical-nav-group *ngIf="selectedEntry['filters-tags']">
+    <clr-vertical-nav-group *ngIf="active.special['category-tags']">
       <clr-icon shape="tags" clrVerticalNavIcon></clr-icon> Tags
       <clr-vertical-nav-group-children>
-          <a *ngFor="let i of filters.tags"
+          <a *ngFor="let i of f.listItems.movies.tags"
             clrVerticalNavLink
-            (click)="updateFilterSingle('tags', i); selectedEntry[i]=!selectedEntry[i]"
-            [ngClass]="selectedEntry[i] ? 'active' : ''"> {{i}} </a>
+            (click)="updateFilterSingle('tags', i); active.filters['tag-' + i]=!active.filters['tag-' + i]"
+            [ngClass]="active.filters['tag-' + i] ? 'active' : ''"> {{i}} </a>
       </clr-vertical-nav-group-children>
     </clr-vertical-nav-group>
 
-    <clr-vertical-nav-group *ngIf="selectedEntry['filters-parentalRatings']">
+    <clr-vertical-nav-group *ngIf="active.special['category-parentalRatings']">
       <clr-icon shape="key" clrVerticalNavIcon></clr-icon> Parental Ratings
       <clr-vertical-nav-group-children>
-          <a *ngFor="let i of filters.parentalRatings"
+          <a *ngFor="let i of f.listItems.movies.parentalRatings"
             clrVerticalNavLink
-            (click)="updateFilterSingle('parentalRatings', i); selectedEntry[i]=!selectedEntry[i]"
-            [ngClass]="selectedEntry[i] ? 'active' : ''"> {{i}} </a>
+            (click)="updateFilterSingle('parentalRatings', i); active.filters['parentalRating-' + i]=!active.filters['parentalRating-' + i]"
+            [ngClass]="active.filters['parentalRating-' + i] ? 'active' : ''"> {{i}} </a>
       </clr-vertical-nav-group-children>
     </clr-vertical-nav-group>
 
-    <clr-vertical-nav-group *ngIf="selectedEntry['filters-years']">
+    <clr-vertical-nav-group *ngIf="active.special['category-years']">
       <clr-icon shape="calendar" clrVerticalNavIcon></clr-icon> Years
       <clr-vertical-nav-group-children>
-          <a *ngFor="let i of filters.years"
+          <a *ngFor="let i of f.listItems.movies.years"
             clrVerticalNavLink 
-            (click)="updateFilterSingle('years', i); selectedEntry[i]=!selectedEntry[i]"
-            [ngClass]="selectedEntry[i] ? 'active' : ''"> {{i}} </a>
+            (click)="updateFilterSingle('years', i); active.filters['years' + i]=!active.filters['years' + i]"
+            [ngClass]="active.filters['years' + i] ? 'active' : ''"> {{i}} </a>
       </clr-vertical-nav-group-children>
     </clr-vertical-nav-group>
 

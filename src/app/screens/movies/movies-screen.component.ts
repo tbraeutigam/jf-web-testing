@@ -18,29 +18,11 @@ export class MoviesScreenComponent implements OnInit {
   private server = this.configService.getServer();
   private user = this.configService.getUser();
 
+  private active =  {
+    filters : {},
+    special: {}
+  };
 
-  private selectedEntry = {};
-  private filtersApplied = {
-    status: {
-      paused: false,
-      unwatched: false,
-      watched: false,
-      favorite: false
-    },
-    libraries: [],
-    genres: [],
-    parentalRatings: [],
-    years: [],
-    tags: []
-  }
-
-  private filters = {
-    libraries: [],
-    genres: [],
-    parentalRatings: [],
-    years: [],
-    tags: []
-  }
 
   private allItems = [];
   private libraryInfo = {
@@ -52,185 +34,28 @@ export class MoviesScreenComponent implements OnInit {
 
 
   constructor(private apiService: ApiService,
-    private filterService: FilterService,
+    private f: FilterService,
     private configService: ConfigService,
     private route: ActivatedRoute,
     private location: Location) { }
 
   resetFilters(){
-    this.filtersApplied = {
-      status: {
-        paused: false,
-        unwatched: false,
-        watched: false,
-        favorite: false
-      },
-      libraries: [],
-      genres: [],
-      parentalRatings: [],
-      years: [],
-      tags: []
-    }
-    for (let i in this.allItems){
-      this.allItems[i].show = true;
+    if (this.f.resetFilters('movies')){
+      this.runFilter();
+      this.active.filters = {};
     }
   }
+
   updateFilterSingle(group: string, subtype: string){
-
-    if (group == 'status'){
-        switch(subtype){
-          case 'favorite':
-            this.filtersApplied.status.favorite = !this.filtersApplied.status.favorite;
-            break;
-          case 'paused':
-            this.filtersApplied.status.paused = !this.filtersApplied.status.paused;
-            break;
-          case 'watched':
-            this.filtersApplied.status.watched = !this.filtersApplied.status.watched;
-            break;
-          case 'unwatched':
-            this.filtersApplied.status.unwatched = !this.filtersApplied.status.unwatched;
-            break;
-        }
-      }
-      else {
-        switch (group) {
-          case 'library':
-              if (!this.filtersApplied.libraries.includes(subtype)){
-                this.filtersApplied.libraries.push(subtype);
-              }
-              else {
-                let index = this.filtersApplied.libraries.indexOf(subtype, 0);
-                if (index > -1) this.filtersApplied.libraries.splice(index, 1);
-              }
-            break;
-          case 'genres':
-              if (!this.filtersApplied.genres.includes(subtype)){
-                this.filtersApplied.genres.push(subtype);
-              }
-              else {
-                let index = this.filtersApplied.genres.indexOf(subtype, 0);
-                if (index > -1) this.filtersApplied.genres.splice(index, 1);
-              }
-            break;
-          case 'parentalRatings':
-              if (this.filters.parentalRatings.includes(subtype)
-                  && !this.filtersApplied.parentalRatings.includes(subtype)){
-                this.filtersApplied.parentalRatings.push(subtype);
-              }
-              else {
-                let index = this.filtersApplied.parentalRatings.indexOf(subtype, 0);
-                if (index > -1) this.filtersApplied.parentalRatings.splice(index, 1);
-              }
-            break;
-          case 'years':
-              if (this.filters.years.includes(subtype)
-                  && !this.filtersApplied.years.includes(subtype)){
-                this.filtersApplied.years.push(subtype);
-              }
-              else {
-                let index = this.filtersApplied.years.indexOf(subtype, 0);
-                if (index > -1) this.filtersApplied.years.splice(index, 1);
-              }
-            break;
-          case 'tags':
-              if (this.filters.tags.includes(subtype)
-                  && !this.filtersApplied.tags.includes(subtype)){
-                this.filtersApplied.tags.push(subtype);
-              }
-              else {
-                let index = this.filtersApplied.tags.indexOf(subtype, 0);
-                if (index > -1) this.filtersApplied.tags.splice(index, 1);
-              }
-            break;
-          }
-      }
-
-      this.runFilter()
+    this.f.setFilterSingle('movies', group, subtype);
+    this.runFilter();
   }
-  runFilter() {
-    // Apply filters
+  
 
-    let f = this.filtersApplied;
-
-    for (let i in this.allItems){
-      this.allItems[i].show = false;
-      if (f.status.watched   && !this.allItems[i].watched ) continue;
-      if (f.status.paused    && !this.allItems[i].paused  ) continue;
-      if (f.status.unwatched &&  this.allItems[i].watched ) continue;
-      if (f.status.favorite  && !this.allItems[i].favorite) continue;
-
-      let matches = false;
-
-      // Library Filtering: Matching *ANY* of selected Libraries
-      if (f.libraries.length > 0){
-        for (let x of f.libraries){
-          if (this.allItems[i].trueParent == x){
-            matches = true;
-            break;
-          }
-        }
-        if (!matches) continue;
-        matches = false;
-      }
-
-      // Genre Filtering: Need to match *ALL* selected genres
-      if (f.genres.length > 0){
-        for (let x of f.genres){
-          if (!this.allItems[i].genres.includes(x)){
-            matches = false;
-            break
-          }
-          else {
-            matches = true;
-          }
-        }
-        if (!matches) continue;
-        matches = false; 
-      }
-
-      // Parental Rating Filtering: Matching *ANY* of selected ratings
-      if (f.parentalRatings.length > 0){
-        for (let x of f.parentalRatings){
-          if (this.allItems[i].parentalRating == x){
-            matches = true;
-            break;
-          }
-        }
-        if (!matches) continue;
-        matches = false;
-      }
-
-      // Year Filtering: Matching *ANY* of selected years
-      if (f.years.length > 0){
-        for (let x of f.years){
-          if (this.allItems[i].year == x){
-            matches = true;
-            break;
-          }
-        }
-        if (!matches) continue;
-        matches = false;
-      }
-      
-      // Tag Filtering: Need to match *ALL* selected tags
-      if (f.tags.length > 0){
-        for (let x of f.tags){
-          if (!this.allItems[i].tags.includes(x)){
-            matches = false;
-            break
-          }
-          else {
-            matches = true;
-          }
-        }
-        if (!matches) continue;
-      }
-
-      this.allItems[i].show = true;
-    }
+  runFilter(){
+    this.allItems = this.f.filterList('movies', this.allItems);
   }
-
+  
   getMovieItems(xLibrary: string){
     // Get all Movies per Library, then as Detail.
     let fields = [ 'Name', 'Id', 'UserData', 'ImageTags' ];
@@ -238,13 +63,12 @@ export class MoviesScreenComponent implements OnInit {
       SortBy: "SortName",
       SortOrder: "Ascending",
       Recursive: "True",
-      IncludeItemTypes: "Movie",
       parentId: xLibrary
     };
 
     this.libraryInfo.fetching.push(xLibrary);
 
-    this.apiService.getItems(this.user, '', fields, options)
+    this.apiService.getItems(this.user, 'Movie', fields, options)
                     .subscribe((data: {}) => {
 
                       // Process Items for easier templating
@@ -262,7 +86,7 @@ export class MoviesScreenComponent implements OnInit {
                           favorite: i['UserData']['isFavorite'],
                           hd: i['isHD'],
                           year: i['ProductionYear'],
-                          tags: i['Tags'],
+                          tags: [],
                           playcount: i['UserData']['PlayCount'],
                           trueParent: xLibrary
                         }
@@ -275,7 +99,17 @@ export class MoviesScreenComponent implements OnInit {
                         // Fix Parental Rating being Empty
                         if (tmp.parentalRating == '' || tmp.parentalRating === undefined ) tmp.parentalRating = "Unavailable";
 
-
+                        // Normalize & deduplicate Genres and Tags
+                        if (i['Tags'] !== undefined && i['Tags'].length > 0){
+                          for (let x of i['Tags']){
+                            if (!tmp.tags.includes(x)) tmp.tags.push(x.normalize());
+                          }
+                        }
+                        if (i['Genres'] !== undefined && i['Genres'].length > 0){
+                          for (let x of i['Genres']){
+                            if (!tmp.genres.includes(x)) tmp.genres.push(x.normalize());
+                          }
+                        }
 
                         this.allItems.push(tmp)
                       }
@@ -287,7 +121,6 @@ export class MoviesScreenComponent implements OnInit {
   }
 
   postProcessItems(){
-    let itemLibraries = [];
     let itemGenres = [];
     let itemParentalRatings = [];
     let itemYears = [];
@@ -308,7 +141,7 @@ export class MoviesScreenComponent implements OnInit {
 
       // Populate Tags
       for (let tag of i['tags']){
-        if (!itemTags.includes(tag)) itemGenres.push(tag);
+        if (!itemTags.includes(tag)) itemTags.push(tag);
       }
 
       // Populate Parental Ratings
@@ -319,17 +152,17 @@ export class MoviesScreenComponent implements OnInit {
 
     }
 
-    this.filters = {
+    this.f.listItems.movies = {
       libraries: [],
       genres: itemGenres.sort(),
       parentalRatings: itemParentalRatings.sort(),
       years: itemYears.sort(),
       tags: itemTags.sort()
     }
-    this.selectedEntry['filters-tags'] = itemTags.length > 0 ? true : false;
-    this.selectedEntry['filters-parentalRatings'] = itemParentalRatings.length > 0 ? true : false;
-    this.selectedEntry['filters-genres'] = itemGenres.length > 0 ? true : false;
-    this.selectedEntry['filters-years'] = itemYears.length > 0 ? true : false;
+    this.active.special['category-tags'] = itemTags.length > 0 ? true : false;
+    this.active.special['category-parentalRatings'] = itemParentalRatings.length > 0 ? true : false;
+    this.active.special['category-genres'] = itemGenres.length > 0 ? true : false;
+    this.active.special['category-years'] = itemYears.length > 0 ? true : false;
   }
   getMovieLibraries(slug){
     this.apiService
@@ -372,7 +205,7 @@ export class MoviesScreenComponent implements OnInit {
   ngOnInit() {
     this.route.url.subscribe((val) => {
       // Make sure 'All Libraries' is highlighted correctly
-      this.selectedEntry['main-all-libraries'] = val.length == 1 ? true : false;
+      this.active.special['libraries-all'] = val.length == 1 ? true : false;
 
       this.getMovieLibraries(val);
     })
