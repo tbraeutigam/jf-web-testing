@@ -1,0 +1,70 @@
+<div class="content-container">
+  <div class="content-area">
+    <h2>My Libraries</h2>
+
+    <div class="clr-row">
+      <div *ngFor="let i of userLibraries" class="clr-col-xl-2 clr-col-lg-4 clr-col-md-6 clr-col-12" id="item-display-{{i.Id}}">
+          <a routerLink="/{{i.CollectionType}}/library/{{i.Id}}" class="clickable">
+              <div class="card">
+                  <div class="card-img">
+                      <img src="https://jellyfin.media.braeutigam.tech/emby/Items/{{i.Id}}/Images/Primary">
+                  </div>
+                  <div class="card-header">
+                      {{i.Name}}
+                  </div>
+              </div>
+          </a>
+      </div>
+    </div>
+
+    <h2>Continue Watching</h2>
+
+    <div class="clr-row">
+      <div *ngFor="let i of itemsInprogressNew" class="clr-col-xl-2 clr-col-lg-4 clr-col-md-6 clr-col-12">
+          <div class="card">
+              <div class="card-img">
+                  <img src="{{i.image}}">
+              </div>
+              <div class="card-block">
+                  <div class="card-title">{{i.name}}</div>
+              </div>
+              <div class="card-footer">
+                  <div class="progress">
+                      <progress value="{{i.progress}}" max="100"></progress>
+                  </div>
+                  <button class="btn btn-sm btn-link">
+                      <clr-icon shape="play" class="is-solid"></clr-icon> Continue
+                  </button>
+                  <button class="btn btn-sm btn-link">
+                      <clr-icon shape="times-circle" class="is-solid"></clr-icon> Stop
+                  </button>
+                  <clr-dropdown>
+                      <button type="button" class="btn btn-sm btn-link" clrDropdownTrigger>
+                        <clr-icon shape="ellipsis-vertical"></clr-icon> More
+                      </button>
+                      <clr-dropdown-menu clrPosition="top-left" *clrIfOpen>
+                          <label class="dropdown-header">More Actions</label>
+                          <button type="button" clrDropdownItem>Action 1</button>
+                          <button type="button" disabled clrDropdownItem>Disabled Action</button>
+                          <div class="dropdown-divider"></div>
+                          <clr-dropdown>
+                              <button type="button" clrDropdownTrigger>Link 1</button>
+                              <clr-dropdown-menu>
+                                  <button type="button" clrDropdownItem>Foo</button>
+                                  <clr-dropdown>
+                                      <button type="button" clrDropdownTrigger>Bar</button>
+                                      <clr-dropdown-menu clrPosition="left-top">
+                                          <button type="button" clrDropdownItem>Baz</button>
+                                      </clr-dropdown-menu>
+                                  </clr-dropdown>
+                              </clr-dropdown-menu>
+                          </clr-dropdown>
+                          <button type="button" clrDropdownItem>Link 2</button>
+                      </clr-dropdown-menu>
+                  </clr-dropdown>
+              </div>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>

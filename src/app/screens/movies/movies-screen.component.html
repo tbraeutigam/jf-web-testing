@@ -1,0 +1,140 @@
+<div class="content-container">
+  <div class="content-area">
+      <div class="clr-row">
+          <ng-container *ngFor="let i of allItems" >
+            <div *ngIf="i.show"
+                class="clr-col-xl-2 clr-col-lg-4 clr-col-md-6 clr-col-12"
+                id="item-display-{{i.id}}">
+                <div class="card">
+                  <a routerLink="/movies/detail/{{i.id}}"><div class="card-img"><img src="{{i.image}}"></div></a>
+                  <div class="card-block"><div class="card-title">{{i.name}}</div></div>
+                    <div class="card-footer">
+                      <div *ngIf="i.paused" class="progress"><progress value="{{i.progress}}" max="100"></progress></div>
+                      <button *ngIf="!i.paused" class="btn btn-sm btn-link">
+                        <clr-icon shape="play" class="is-solid"></clr-icon> Play
+                      </button>
+                      <button *ngIf="i.paused" class="btn btn-sm btn-link">
+                        <clr-icon shape="play" class="is-solid"></clr-icon> Continue
+                      </button>
+
+                      <clr-dropdown>
+                        <button type="button" class="btn btn-sm btn-link" clrDropdownTrigger>
+                          <clr-icon shape="ellipsis-vertical"></clr-icon> More
+                        </button>
+                        <clr-dropdown-menu clrPosition="top-left" *clrIfOpen>
+                          <label class="dropdown-header">More Actions</label>
+                          <button type="button" clrDropdownItem>Add to collection</button>
+                          <button type="button" clrDropdownItem>Add to playlist</button>
+                          <div class="dropdown-divider"></div>
+                          <button type="button" clrDropdownItem>Download</button>
+                          <button type="button" clrDropdownItem>Edit</button>
+                        </clr-dropdown-menu>
+                      </clr-dropdown>
+
+                    </div>
+                </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+  <clr-vertical-nav [clrVerticalNavCollapsible]="true" [(clrVerticalNavCollapsed)]="collapsed" [clr-nav-level]="2">
+    <a clrVerticalNavLink *ngIf="libraryInfo.available.length != 1" routerLink="/movies" [ngClass]="selectedEntry['main-all-libraries'] ? 'active' : ''">
+      <clr-icon clrVerticalNavIcon shape="video-gallery"></clr-icon> All Libraries
+    </a>
+    <ng-container *ngIf="libraryInfo.available.length != 1">
+      <a *ngFor="let i of libraryInfo.available"
+        clrVerticalNavLink
+        routerLink="/movies/libraries/{{i.id}}"
+        routerLinkActive="active">
+          <clr-icon clrVerticalNavIcon shape="video-gallery"></clr-icon> {{i.name}}
+      </a>
+    </ng-container>
+    <div class="nav-divider" *ngIf="libraryInfo.available.length != 1"></div>
+ 
+    <a clrVerticalNavLink
+      (click)="updateFilterSingle('status', 'paused'); selectedEntry['main-paused']=!selectedEntry['main-paused']"
+      [ngClass]="selectedEntry['main-paused'] ? 'active' : ''">
+      <clr-icon
+        shape="pause"
+        [ngClass]="selectedEntry['main-paused'] ? 'is-solid' : ''"></clr-icon>   Paused </a>
+    
+    <a clrVerticalNavLink
+      (click)="updateFilterSingle('status', 'unwatched'); selectedEntry['main-unwatched']=!selectedEntry['main-unwatched']"
+      [ngClass]="selectedEntry['main-unwatched'] ? 'active' : ''">
+      <clr-icon
+        shape="eye-hide"
+        [ngClass]="selectedEntry['main-unwatched'] ? 'is-solid' : ''"></clr-icon>Unwatched </a>
+
+    <a clrVerticalNavLink
+      (click)="updateFilterSingle('status', 'watched'); selectedEntry['main-watched']=!selectedEntry['main-watched']"
+      [ngClass]="selectedEntry['main-watched'] ? 'active' : ''">
+      <clr-icon
+      shape="eye"
+      [ngClass]="selectedEntry['main-watched'] ? 'is-solid' : ''"></clr-icon>    Watched </a>
+
+    <a clrVerticalNavLink
+      (click)="updateFilterSingle('status', 'favorite'); selectedEntry['main-favorite']=!selectedEntry['main-favorite']"
+      [ngClass]="selectedEntry['main-favorite'] ? 'active' : ''">
+      <clr-icon
+        shape="star"
+        [ngClass]="selectedEntry['main-favorite'] ? 'is-solid' : ''"></clr-icon> Favorites </a>
+
+    <div class="nav-divider"></div>
+    <a clrVerticalNavLink (click)="resetFilters()">
+      <clr-icon clrVerticalNavIcon shape="ban"></clr-icon> Reset Filters
+    </a>
+
+    <div class="nav-divider"></div><label class="nav-header">View Filters</label>
+    <clr-vertical-nav-group *ngIf="!libraryInfo.single">
+        <clr-icon clrVerticalNavIcon shape="video-gallery"></clr-icon> Movie Libraries
+        <clr-vertical-nav-group-children>
+          <a *ngFor="let i of libraryInfo.available"
+            clrVerticalNavLink
+            (click)="updateFilterSingle('library', i.id); selectedEntry[i.id]=!selectedEntry[i.id]"
+            [ngClass]="selectedEntry[i.id] ? 'active' : ''"> {{i.name}}
+          </a>
+        </clr-vertical-nav-group-children>
+    </clr-vertical-nav-group>
+
+    <clr-vertical-nav-group *ngIf="selectedEntry['filters-genres']">
+      <clr-icon shape="list" clrVerticalNavIcon></clr-icon> Genres
+      <clr-vertical-nav-group-children>
+          <a *ngFor="let i of filters.genres"
+            clrVerticalNavLink
+            (click)="updateFilterSingle('genres', i); selectedEntry[i]=!selectedEntry[i]"
+            [ngClass]="selectedEntry[i] ? 'active' : ''"> {{i}} </a>
+      </clr-vertical-nav-group-children>
+    </clr-vertical-nav-group>
+
+    <clr-vertical-nav-group *ngIf="selectedEntry['filters-tags']">
+      <clr-icon shape="tags" clrVerticalNavIcon></clr-icon> Tags
+      <clr-vertical-nav-group-children>
+          <a *ngFor="let i of filters.tags"
+            clrVerticalNavLink
+            (click)="updateFilterSingle('tags', i); selectedEntry[i]=!selectedEntry[i]"
+            [ngClass]="selectedEntry[i] ? 'active' : ''"> {{i}} </a>
+      </clr-vertical-nav-group-children>
+    </clr-vertical-nav-group>
+
+    <clr-vertical-nav-group *ngIf="selectedEntry['filters-parentalRatings']">
+      <clr-icon shape="key" clrVerticalNavIcon></clr-icon> Parental Ratings
+      <clr-vertical-nav-group-children>
+          <a *ngFor="let i of filters.parentalRatings"
+            clrVerticalNavLink
+            (click)="updateFilterSingle('parentalRatings', i); selectedEntry[i]=!selectedEntry[i]"
+            [ngClass]="selectedEntry[i] ? 'active' : ''"> {{i}} </a>
+      </clr-vertical-nav-group-children>
+    </clr-vertical-nav-group>
+
+    <clr-vertical-nav-group *ngIf="selectedEntry['filters-years']">
+      <clr-icon shape="calendar" clrVerticalNavIcon></clr-icon> Years
+      <clr-vertical-nav-group-children>
+          <a *ngFor="let i of filters.years"
+            clrVerticalNavLink 
+            (click)="updateFilterSingle('years', i); selectedEntry[i]=!selectedEntry[i]"
+            [ngClass]="selectedEntry[i] ? 'active' : ''"> {{i}} </a>
+      </clr-vertical-nav-group-children>
+    </clr-vertical-nav-group>
+
+  </clr-vertical-nav>
+</div>
