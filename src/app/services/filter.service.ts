@@ -55,69 +55,16 @@ export class FilterService {
 
   public setFilterSingle(type: string, group: string, subtype: string){
     if (group == 'status'){
-      switch(subtype){
-        case 'favorite':
-          this.filters[type].status.favorite = !this.filters[type].status.favorite;
-          break;
-        case 'paused':
-          this.filters[type].status.paused = !this.filters[type].status.paused;
-          break;
-        case 'watched':
-          this.filters[type].status.watched = !this.filters[type].status.watched;
-          break;
-        case 'unwatched':
-          this.filters[type].status.unwatched = !this.filters[type].status.unwatched;
-          break;
-      }
+        this.filters[type][group][subtype] = !this.filters[type][group][subtype];
     }
     else {
-      switch (group) {
-        case 'library':
-            if (!this.filters[type].libraries.includes(subtype)){
-              this.filters[type].libraries.push(subtype);
-            }
-            else {
-              let index = this.filters[type].libraries.indexOf(subtype, 0);
-              if (index > -1) this.filters[type].libraries.splice(index, 1);
-            }
-          break;
-        case 'genres':
-            if (!this.filters[type].genres.includes(subtype)){
-              this.filters[type].genres.push(subtype);
-            }
-            else {
-              let index = this.filters[type].genres.indexOf(subtype, 0);
-              if (index > -1) this.filters[type].genres.splice(index, 1);
-            }
-          break;
-        case 'parentalRatings':
-            if (!this.filters[type].parentalRatings.includes(subtype)){
-              this.filters[type].parentalRatings.push(subtype);
-            }
-            else {
-              let index = this.filters[type].parentalRatings.indexOf(subtype, 0);
-              if (index > -1) this.filters[type].parentalRatings.splice(index, 1);
-            }
-          break;
-        case 'years':
-            if (!this.filters[type].years.includes(subtype)){
-              this.filters[type].years.push(subtype);
-            }
-            else {
-              let index = this.filters[type].years.indexOf(subtype, 0);
-              if (index > -1) this.filters[type].years.splice(index, 1);
-            }
-          break;
-        case 'tags':
-            if (!this.filters[type].tags.includes(subtype)){
-              this.filters[type].tags.push(subtype);
-            }
-            else {
-              let index = this.filters[type].tags.indexOf(subtype, 0);
-              if (index > -1) this.filters[type].tags.splice(index, 1);
-            }
-          break;
-        }
+      if (!this.filters[type][group].includes(subtype)){
+        this.filters[type][group].push(subtype);
+      }
+      else {
+        let index = this.filters[type][group].indexOf(subtype, 0);
+        if (index > -1 ) this.filters[type][group].splice(index, 1);
+      }
     }
   }
 
