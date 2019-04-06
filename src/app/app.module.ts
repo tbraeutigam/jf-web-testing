@@ -9,8 +9,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 // Screens
 import { LandingScreenComponent } from './screens/landing/landing-screen.component';
-import { MoviesScreenComponent } from './screens/movies/movies-screen.component';
-import { TvshowsComponent } from './screens/tvshows/tvshows.component';
 import { LibraryComponent } from './screens/library/library.component';
 import { LoginComponent } from './screens/login/login.component';
 
@@ -19,8 +17,6 @@ import { LoginComponent } from './screens/login/login.component';
   declarations: [
     AppComponent,
     LandingScreenComponent,
-    MoviesScreenComponent,
-    TvshowsComponent,
     LibraryComponent,
     LoginComponent
     ],

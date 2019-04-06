@@ -14,8 +14,11 @@ import { FilterService } from '../../services/filter.service';
 export class LibraryComponent implements OnInit {
   private server = this.configService.getServer();
   private user = this.configService.getUser();
+
+  // Specify Search/Filter variables
   private itemType: string;
   private itemTypeInclude: string;
+  private searchRecursive: string;
 
   private active =  {
     filters : {},
@@ -84,7 +87,7 @@ export class LibraryComponent implements OnInit {
     let options = {
       SortBy: "SortName",
       SortOrder: "Ascending",
-      Recursive: "True",
+      Recursive: this.searchRecursive,
       parentId: xLibrary
     };
 
@@ -238,11 +241,18 @@ export class LibraryComponent implements OnInit {
         case 'movies':
             this.itemType =  'movies';
             this.itemTypeInclude = 'Movie';
+            this.searchRecursive = 'True';
           break;
         case 'tvshows':
             this.itemType = 'tvshows';
             this.itemTypeInclude = 'Series';
+            this.searchRecursive = 'True';
           break;
+        case 'photos':
+            this.itemType = 'homevideos';
+            this.itemTypeInclude = '';
+            this.searchRecursive = 'False';
+            break;
         case 'clips':
           break;
       }
