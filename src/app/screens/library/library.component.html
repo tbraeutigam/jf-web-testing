@@ -1,12 +1,12 @@
 <div class="content-container">
   <div class="content-area">
       <div class="clr-row">
-          <ng-container *ngFor="let i of allItems" >
+          <ng-container *ngFor="let i of allItems[itemType]" >
             <div *ngIf="i.show"
                 class="clr-col-xl-2 clr-col-lg-4 clr-col-md-6 clr-col-12"
                 id="item-display-{{i.id}}">
                 <div class="card">
-                  <a routerLink="/movies/detail/{{i.id}}"><div class="card-img"><img src="{{i.image}}"></div></a>
+                  <a routerLink="/{{itemType}}/detail/{{i.id}}"><div class="card-img"><img src="{{i.image}}"></div></a>
                   <div class="card-block"><div class="card-title">{{i.name}}</div></div>
                     <div class="card-footer">
                       <div *ngIf="i.paused" class="progress"><progress value="{{i.progress}}" max="100"></progress></div>
@@ -14,7 +14,7 @@
                         <clr-icon shape="play" class="is-solid"></clr-icon> Play
                       </button>
                       <button *ngIf="i.paused" class="btn btn-sm btn-link">
-                        <clr-icon shape="play" class="is-solid"></clr-icon> Continue
+                        <clr-icon shape="play" class="is-solid"></clr-icon> Resume
                       </button>
 
                       <clr-dropdown>
@@ -37,14 +37,15 @@
           </ng-container>
         </div>
       </div>
-  <clr-vertical-nav [clrVerticalNavCollapsible]="true" [(clrVerticalNavCollapsed)]="collapsed" [clr-nav-level]="2">
-    <a clrVerticalNavLink *ngIf="libraryInfo.available.length != 1" routerLink="/movies" [ngClass]="active.special['libraries-all'] ? 'active' : ''">
+
+  <clr-vertical-nav  [clr-nav-level]="2">
+    <a clrVerticalNavLink *ngIf="libraryInfo.available.length != 1" routerLink="/{{itemType}}" [ngClass]="active.special['libraries-all'] ? 'active' : ''">
       <clr-icon clrVerticalNavIcon shape="video-gallery"></clr-icon> All Libraries
     </a>
     <ng-container *ngIf="libraryInfo.available.length != 1">
       <a *ngFor="let i of libraryInfo.available"
         clrVerticalNavLink
-        routerLink="/movies/libraries/{{i.id}}"
+        routerLink="/{{itemType}}/libraries/{{i.id}}"
         routerLinkActive="active">
           <clr-icon clrVerticalNavIcon shape="video-gallery"></clr-icon> {{i.name}}
       </a>
@@ -79,6 +80,8 @@
         shape="star"
         [ngClass]="active.filters['status-favorite'] ? 'is-solid' : ''"></clr-icon> Favorites </a>
 
+
+
     <div class="nav-divider"></div>
     <a clrVerticalNavLink (click)="resetFilters()">
       <clr-icon clrVerticalNavIcon shape="ban"></clr-icon> Reset Filters
@@ -86,7 +89,7 @@
 
     <div class="nav-divider"></div><label class="nav-header">View Filters</label>
     <clr-vertical-nav-group *ngIf="!libraryInfo.single">
-        <clr-icon clrVerticalNavIcon shape="video-gallery"></clr-icon> Movie Libraries
+        <clr-icon clrVerticalNavIcon shape="video-gallery"></clr-icon> Libraries
         <clr-vertical-nav-group-children>
           <a *ngFor="let i of libraryInfo.available"
             clrVerticalNavLink
@@ -96,45 +99,17 @@
         </clr-vertical-nav-group-children>
     </clr-vertical-nav-group>
 
-    <clr-vertical-nav-group *ngIf="active.special['category-genres']">
-      <clr-icon shape="list" clrVerticalNavIcon></clr-icon> Genres
-      <clr-vertical-nav-group-children>
-          <a *ngFor="let i of f.listItems.movies.genres"
-            clrVerticalNavLink
-            (click)="updateFilterSingle('genres', i); active.filters['genre-' + i]=!active.filters['genre-' + i]"
-            [ngClass]="active.filters['genre-' + i] ? 'active' : ''"> {{i}} </a>
-      </clr-vertical-nav-group-children>
-    </clr-vertical-nav-group>
-
-    <clr-vertical-nav-group *ngIf="active.special['category-tags']">
-      <clr-icon shape="tags" clrVerticalNavIcon></clr-icon> Tags
-      <clr-vertical-nav-group-children>
-          <a *ngFor="let i of f.listItems.movies.tags"
-            clrVerticalNavLink
-            (click)="updateFilterSingle('tags', i); active.filters['tag-' + i]=!active.filters['tag-' + i]"
-            [ngClass]="active.filters['tag-' + i] ? 'active' : ''"> {{i}} </a>
-      </clr-vertical-nav-group-children>
-    </clr-vertical-nav-group>
-
-    <clr-vertical-nav-group *ngIf="active.special['category-parentalRatings']">
-      <clr-icon shape="key" clrVerticalNavIcon></clr-icon> Parental Ratings
-      <clr-vertical-nav-group-children>
-          <a *ngFor="let i of f.listItems.movies.parentalRatings"
-            clrVerticalNavLink
-            (click)="updateFilterSingle('parentalRatings', i); active.filters['parentalRating-' + i]=!active.filters['parentalRating-' + i]"
-            [ngClass]="active.filters['parentalRating-' + i] ? 'active' : ''"> {{i}} </a>
-      </clr-vertical-nav-group-children>
-    </clr-vertical-nav-group>
-
-    <clr-vertical-nav-group *ngIf="active.special['category-years']">
-      <clr-icon shape="calendar" clrVerticalNavIcon></clr-icon> Years
-      <clr-vertical-nav-group-children>
-          <a *ngFor="let i of f.listItems.movies.years"
-            clrVerticalNavLink 
-            (click)="updateFilterSingle('years', i); active.filters['years' + i]=!active.filters['years' + i]"
-            [ngClass]="active.filters['years' + i] ? 'active' : ''"> {{i}} </a>
-      </clr-vertical-nav-group-children>
-    </clr-vertical-nav-group>
+    <ng-container *ngFor="let c of f.getFilters(itemType)['iterFilters']">
+      <clr-vertical-nav-group *ngIf="active.special['category-' + c[1]]">
+        <clr-icon shape="filter" clrVerticalNavIcon></clr-icon> {{c[0]}}
+        <clr-vertical-nav-group-children>
+            <a *ngFor="let i of f.listItems[itemType][c[1]]"
+              clrVerticalNavLink
+              (click)="updateFilterSingle(c[1], i); active.filters[c[1] + '-' + i]=!active.filters[c[1] + '-' + i]"
+              [ngClass]="active.filters[c[1] + '-' + i] ? 'active' : ''"> {{i}} </a>
+        </clr-vertical-nav-group-children>
+      </clr-vertical-nav-group>
+    </ng-container>
 
   </clr-vertical-nav>
 </div>

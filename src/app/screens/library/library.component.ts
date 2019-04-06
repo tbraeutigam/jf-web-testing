@@ -8,21 +8,21 @@ import { ConfigService } from '../../services/config.service';
 import { FilterService } from '../../services/filter.service';
 
 @Component({
-  selector: 'app-movies-screen',
-  templateUrl: './movies-screen.component.html',
-  styleUrls: ['./movies-screen.component.sass']
+  templateUrl: './library.component.html'
 })
 
-export class MoviesScreenComponent implements OnInit {
+export class LibraryComponent implements OnInit {
   private server = this.configService.getServer();
   private user = this.configService.getUser();
+  private itemType: string;
+  private itemTypeInclude: string;
 
   private active =  {
     filters : {},
     special: {}
   };
 
-  private allItems = [];
+  private allItems = {};
   private libraryInfo = {
     available: [],
     single: false,
@@ -51,31 +51,35 @@ export class MoviesScreenComponent implements OnInit {
       years: [],
       tags: [],
       matchAll: ['genres', 'tags'],
-      matchAny: ['parentalRatings', 'years', 'libraries']
+      matchAny: ['parentalRatings', 'years', 'libraries'],
+      iterFilters: [['Genres', 'genres'],
+                    ['Tags', 'tags'],
+                    ['Parental Ratings', 'parentalRatings'],
+                    ['Years', 'years']
+                  ]
     };
     return res;
   }
 
   resetFilters(){
     let param = this.getDefaultFilters();
-    if (this.f.resetFilters('movies', param)){
+    if (this.f.resetFilters(this.itemType, param)){
       this.runFilter();
       this.active.filters = {};
     }
   }
 
   updateFilterSingle(group: string, subtype: string){
-    this.f.setFilterSingle('movies', group, subtype);
+    this.f.setFilterSingle(this.itemType, group, subtype);
     this.runFilter();
   }
   
 
   runFilter(){
-    this.allItems = this.f.filterList('movies', this.allItems);
+    this.allItems[this.itemType] = this.f.filterList(this.itemType, this.allItems[this.itemType]);
   }
   
-  getMovieItems(xLibrary: string){
-    // Get all Movies per Library, then as Detail.
+  getLibraryItems(xLibrary: string){
     let fields = [ 'Name', 'Id', 'UserData', 'ImageTags' ];
     let options = {
       SortBy: "SortName",
@@ -84,9 +88,9 @@ export class MoviesScreenComponent implements OnInit {
       parentId: xLibrary
     };
 
-    this.libraryInfo.fetching.push(xLibrary);
 
-    this.apiService.getItems(this.user, 'Movie', fields, options)
+    this.libraryInfo.fetching.push(xLibrary);
+    this.apiService.getItems(this.user, this.itemTypeInclude, fields, options)
                     .subscribe((data: {}) => {
 
                       // Process Items for easier templating
@@ -132,7 +136,7 @@ export class MoviesScreenComponent implements OnInit {
                           }
                         }
 
-                        this.allItems.push(tmp)
+                        this.allItems[this.itemType].push(tmp)
                       }
                       this.libraryInfo.done.push(xLibrary);
                       if (this.libraryInfo.done.length == this.libraryInfo.available.length || this.libraryInfo.single){
@@ -147,13 +151,13 @@ export class MoviesScreenComponent implements OnInit {
     let itemYears = [];
     let itemTags = [];
 
-    this.allItems.sort(function (a, b){
+    this.allItems[this.itemType].sort(function (a, b){
       if (a.name < b.name) return -1;
       if (a.name > b.name) return  1;
       return 0;
     });
 
-    for (let i of this.allItems){
+    for (let i of this.allItems[this.itemType]){
 
       // Populate Genres
       for (let genre of i['genres']){
@@ -173,7 +177,7 @@ export class MoviesScreenComponent implements OnInit {
 
     }
 
-    this.f.listItems['movies'] = {
+    this.f.listItems[this.itemType] = {
       libraries: [],
       genres: itemGenres.sort(),
       parentalRatings: itemParentalRatings.sort(),
@@ -186,7 +190,7 @@ export class MoviesScreenComponent implements OnInit {
     this.active.special['category-years'] = itemYears.length > 0 ? true : false;
   }
 
-  getMovieLibraries(slug){
+  getLibraries(slug){
     this.apiService
           .getUserLibraries(this.user)
           .subscribe((data: {} ) => {
@@ -197,7 +201,7 @@ export class MoviesScreenComponent implements OnInit {
 
             // Reset some variables, in case we have 'prior states'
             this.resetFilters();
-            this.allItems = [];
+            this.allItems[this.itemType] = [];
             this.libraryInfo = {
               available: [],
               single: slugLibrary !== null ? true : false,
@@ -211,27 +215,39 @@ export class MoviesScreenComponent implements OnInit {
                 name: i['Name'],
                 id: i['Id']
               };
-              
-              if (i['CollectionType'] == 'movies'){
+              if (i['CollectionType'] == this.itemType){
                 this.libraryInfo.available.push(tmp);
                 if (slugLibrary !== null){
-                  if (tmp.id == slugLibrary) this.getMovieItems(tmp.id);
+                  if (tmp.id == slugLibrary) this.getLibraryItems(tmp.id);
                 }
                 else {
-                  this.getMovieItems(tmp.id);
+                  this.getLibraryItems(tmp.id);
                 }
               }
             }
           });
   }
   ngOnInit() {
-    this.f.setFilters('movies', this.getDefaultFilters());
+    
 
-    this.route.url.subscribe((val) => {
+    this.route.url.subscribe((urlComponents) => {
       // Make sure 'All Libraries' is highlighted correctly
-      this.active.special['libraries-all'] = val.length == 1 ? true : false;
+      this.active.special['libraries-all'] = urlComponents.length == 1 ? true : false;
 
-      this.getMovieLibraries(val);
+      switch (urlComponents[0].toString()){
+        case 'movies':
+            this.itemType =  'movies';
+            this.itemTypeInclude = 'Movie';
+          break;
+        case 'tvshows':
+            this.itemType = 'tvshows';
+            this.itemTypeInclude = 'Series';
+          break;
+        case 'clips':
+          break;
+      }
+      this.f.setFilters(this.itemType, this.getDefaultFilters());
+      this.getLibraries(urlComponents);
     })
   }
 }
