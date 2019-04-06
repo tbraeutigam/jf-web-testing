@@ -22,7 +22,6 @@ export class MoviesScreenComponent implements OnInit {
     special: {}
   };
 
-
   private allItems = [];
   private libraryInfo = {
     available: [],
@@ -38,8 +37,28 @@ export class MoviesScreenComponent implements OnInit {
     private route: ActivatedRoute
   ) { }
 
+  getDefaultFilters(){
+    let res = {
+      status: {
+        paused: false,
+        unwatched: false,
+        watched: false,
+        favorite: false
+      },
+      libraries: [],
+      genres: [],
+      parentalRatings: [],
+      years: [],
+      tags: [],
+      matchAll: ['genres', 'tags'],
+      matchAny: ['parentalRatings', 'years', 'libraries']
+    };
+    return res;
+  }
+
   resetFilters(){
-    if (this.f.resetFilters('movies')){
+    let param = this.getDefaultFilters();
+    if (this.f.resetFilters('movies', param)){
       this.runFilter();
       this.active.filters = {};
     }
@@ -97,7 +116,10 @@ export class MoviesScreenComponent implements OnInit {
 
                         // Fix Parental Rating being Empty
                         if (tmp.parentalRating == '' || tmp.parentalRating === undefined ) tmp.parentalRating = "Unavailable";
-
+                        
+                        // Fix Year being empty
+                        if (tmp.year == '' || tmp.year === undefined ) tmp.year = "Unavailable";
+                        
                         // Normalize & deduplicate Genres and Tags
                         if (i['Tags'] !== undefined && i['Tags'].length > 0){
                           for (let x of i['Tags']){
@@ -151,7 +173,7 @@ export class MoviesScreenComponent implements OnInit {
 
     }
 
-    this.f.listItems.movies = {
+    this.f.listItems['movies'] = {
       libraries: [],
       genres: itemGenres.sort(),
       parentalRatings: itemParentalRatings.sort(),
@@ -163,6 +185,7 @@ export class MoviesScreenComponent implements OnInit {
     this.active.special['category-genres'] = itemGenres.length > 0 ? true : false;
     this.active.special['category-years'] = itemYears.length > 0 ? true : false;
   }
+
   getMovieLibraries(slug){
     this.apiService
           .getUserLibraries(this.user)
@@ -202,6 +225,8 @@ export class MoviesScreenComponent implements OnInit {
           });
   }
   ngOnInit() {
+    this.f.setFilters('movies', this.getDefaultFilters());
+
     this.route.url.subscribe((val) => {
       // Make sure 'All Libraries' is highlighted correctly
       this.active.special['libraries-all'] = val.length == 1 ? true : false;

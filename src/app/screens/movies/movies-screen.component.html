@@ -90,7 +90,7 @@
         <clr-vertical-nav-group-children>
           <a *ngFor="let i of libraryInfo.available"
             clrVerticalNavLink
-            (click)="updateFilterSingle('library', i.id); active.filters['library-' + i.id]=!active.filters['library-' + i.id]"
+            (click)="updateFilterSingle('libraries', i.id); active.filters['library-' + i.id]=!active.filters['library-' + i.id]"
             [ngClass]="active.filters['library-' + i.id] ? 'active' : ''"> {{i.name}}
           </a>
         </clr-vertical-nav-group-children>
