@@ -100,13 +100,13 @@ export class MoviesScreenComponent implements OnInit {
                           name: i['Name'],
                           paused: false,
                           genres: i['Genres'],
-                          parentalRating: i['OfficialRating'],
+                          parentalRatings: i['OfficialRating'],
                           favorite: i['UserData']['isFavorite'],
                           hd: i['isHD'],
-                          year: i['ProductionYear'],
+                          years: i['ProductionYear'],
                           tags: [],
                           playcount: i['UserData']['PlayCount'],
-                          trueParent: xLibrary
+                          libraries: xLibrary
                         }
 
                         // Check Resumability
@@ -115,10 +115,10 @@ export class MoviesScreenComponent implements OnInit {
                         }
 
                         // Fix Parental Rating being Empty
-                        if (tmp.parentalRating == '' || tmp.parentalRating === undefined ) tmp.parentalRating = "Unavailable";
+                        if (tmp.parentalRatings == '' || tmp.parentalRatings === undefined ) tmp.parentalRatings = "Unavailable";
                         
                         // Fix Year being empty
-                        if (tmp.year == '' || tmp.year === undefined ) tmp.year = "Unavailable";
+                        if (tmp.years == '' || tmp.years === undefined ) tmp.years = "Unavailable";
                         
                         // Normalize & deduplicate Genres and Tags
                         if (i['Tags'] !== undefined && i['Tags'].length > 0){
@@ -166,10 +166,10 @@ export class MoviesScreenComponent implements OnInit {
       }
 
       // Populate Parental Ratings
-      if (!itemParentalRatings.includes(i['parentalRating'])) itemParentalRatings.push(i['parentalRating']);
+      if (!itemParentalRatings.includes(i['parentalRatings'])) itemParentalRatings.push(i['parentalRatings']);
 
       // Populate Years
-      if (!itemYears.includes(i['year'])) itemYears.push(i['year']);
+      if (!itemYears.includes(i['years'])) itemYears.push(i['years']);
 
     }
 

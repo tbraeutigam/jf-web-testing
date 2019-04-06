@@ -58,15 +58,8 @@ export class FilterService {
         let f = this.filters[type][filterCategory];
 
         if(f && f.length > 0){
-          let t: string;
-          switch (filterCategory){
-            case 'libraries'      : t = 'trueParent'; break;
-            case 'years'          : t = 'year'; break;
-            case 'parentalRatings': t = 'parentalRating'; break;
-          }
-
           for (let entry of f){
-            if (items[i][t] == entry){
+            if (items[i][filterCategory] == entry){
               matches = true;
               break;
             }
