@@ -20,8 +20,6 @@ export class FilterService {
   }
 
   public setFilterSingle(type: string, group: string, subtype: string){
-    console.log(this.filters);
-    console.log(this.getFilters('movies'));
     if (group == 'status'){
         this.filters[type][group][subtype] = !this.filters[type][group][subtype];
     }
