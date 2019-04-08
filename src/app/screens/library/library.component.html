@@ -3,26 +3,27 @@
       <div class="clr-row">
           <ng-container *ngFor="let i of allItems[itemType]" >
             <div *ngIf="i.show"
-                class="clr-col-xl-2 clr-col-lg-4 clr-col-md-6 clr-col-12"
+                class="clr-col-xl-2 clr-col-lg-3 clr-col-md-4 clr-col-sm-6 clr-col-12"
                 id="item-display-{{i.id}}">
-                <div class="card">
-                  <a routerLink="/{{itemType}}/detail/{{i.id}}"><div class="card-img"><img src="{{i.image}}"></div></a>
-                  <div class="card-block"><div class="card-title">{{i.name}}</div></div>
-                    <div class="card-footer">
+                  <a routerLink="/{{itemType}}/detail/{{i.id}}" class="card clickable">
+                    <div class="card-img"><img src="{{i.image}}"></div>
+                    <div class="card-block"><div class="card-title">{{i.name}}</div></div>
+                    <div class="card-footer" *ngIf="false">
                       <div *ngIf="i.paused" class="progress"><progress value="{{i.progress}}" max="100"></progress></div>
-                      <button *ngIf="!i.paused" class="btn btn-sm btn-link">
-                        <clr-icon shape="play" class="is-solid"></clr-icon> Play
+                      <button *ngIf="!i.paused" class="btn btn-sm btn-outline" title="Play">
+                        <clr-icon shape="play" class="is-solid"></clr-icon>
                       </button>
-                      <button *ngIf="i.paused" class="btn btn-sm btn-link">
-                        <clr-icon shape="play" class="is-solid"></clr-icon> Resume
+                      <button *ngIf="i.paused" class="btn btn-sm btn-outline" title="Resume">
+                        <clr-icon shape="play" class="is-solid"></clr-icon>
                       </button>
-
                       <clr-dropdown>
-                        <button type="button" class="btn btn-sm btn-link" clrDropdownTrigger>
-                          <clr-icon shape="ellipsis-vertical"></clr-icon> More
+                        <button type="button" class="btn btn-sm btn-outline" title="More Actions" clrDropdownTrigger>
+                          <clr-icon shape="ellipsis-vertical"></clr-icon>
                         </button>
                         <clr-dropdown-menu clrPosition="top-left" *clrIfOpen>
                           <label class="dropdown-header">More Actions</label>
+                          <button type="button" routerLink="/{{itemType}}/detail/{{i.id}}" clrDropdownItem>View Details</button>
+                          <div class="dropdown-divider"></div>
                           <button type="button" clrDropdownItem>Add to collection</button>
                           <button type="button" clrDropdownItem>Add to playlist</button>
                           <div class="dropdown-divider"></div>
@@ -30,9 +31,8 @@
                           <button type="button" clrDropdownItem>Edit</button>
                         </clr-dropdown-menu>
                       </clr-dropdown>
-
                     </div>
-                </div>
+                  </a>
             </div>
           </ng-container>
         </div>

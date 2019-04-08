@@ -12,13 +12,21 @@ import { LandingScreenComponent } from './screens/landing/landing-screen.compone
 import { LibraryComponent } from './screens/library/library.component';
 import { LoginComponent } from './screens/login/login.component';
 
+// Detail Views
+import { MovieDetailComponent } from './details/movie/movie-detail.component';
+import { SeriesDetailComponent } from './details/series/series-detail.component';
+import { PhotosDetailComponent } from './details/photos/photos-detail.component';
+
 
 @NgModule({
   declarations: [
     AppComponent,
     LandingScreenComponent,
     LibraryComponent,
-    LoginComponent
+    LoginComponent,
+    MovieDetailComponent,
+    SeriesDetailComponent,
+    PhotosDetailComponent
     ],
   imports: [
     BrowserModule,

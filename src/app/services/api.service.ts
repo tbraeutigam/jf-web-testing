@@ -24,7 +24,7 @@ export class ApiService {
   public getItems(user: string, itemType?: string, fields?: string[], options?: {}){
     let URI = `/Users/${user}/Items${this.apiKey}`;
 
-    if (itemType != '' ) URI += `&IncludeItemTypes=${itemType}`;
+    if (itemType && itemType != '' ) URI += `&IncludeItemTypes=${itemType}`;
     URI += `&Fields=${fields.join(',')}`
 
     if (options) {
@@ -33,5 +33,13 @@ export class ApiService {
       }
     }
     return this.httpClient.get(`${this.apiURL}${URI}`);
+  }
+
+  public getItem(user: string, itemId: any){
+    return this.httpClient.get(`${this.apiURL}/Users/${user}/Items/${itemId}${this.apiKey}`);
+  }
+
+  public getChildren(user: string, itemId: any, recursive: string){
+    return this.httpClient.get(`${this.apiURL}/Users/${user}/Items${this.apiKey}&ParentId=${itemId}&Recursive=${recursive}`)
   }
 }
