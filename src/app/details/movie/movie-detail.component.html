@@ -7,7 +7,7 @@
           <div *ngIf="info.name != info.originalName" class="card-block">
             <div *ngIf="info.paused" class="progress"><progress value="{{info.progress}}" max="100"></progress></div>
             <h4 class="card-title">{{info.originalName}}</h4>
-            <p class="card-text">Played: {{info.progress.toFixed()}}%</p>
+            <a *ngFor="let url of info.raw.ExternalUrls" href="{{url.URL}}" class="label">{{url.Name}}</a>
           </div>
         </div>
       </div>
@@ -61,7 +61,8 @@
         </div>
         <div>
           <h4>{{info.tagline}}</h4>
-          <span>{{info.description}}</span>
+          <p><span class="p2">Parental Rating: {{info.parentalRatings}}</span></p>
+          <p><span>{{info.description}}</span></p>
         </div>
       </div>
     </div>

@@ -7,7 +7,9 @@
                 id="item-display-{{i.id}}">
                   <a routerLink="/{{itemType}}/detail/{{i.id}}" class="card clickable">
                     <div class="card-img"><img src="{{i.image}}"></div>
-                    <div class="card-block"><div class="card-title">{{i.name}}</div></div>
+                    <div class="card-block">
+                        <div *ngIf="i.paused" class="progress"><progress value="{{i.progress}}" max="100"></progress></div>
+                        <h4 class="card-title">{{i.name}}</h4></div>
                     <div class="card-footer" *ngIf="false">
                       <div *ngIf="i.paused" class="progress"><progress value="{{i.progress}}" max="100"></progress></div>
                       <button *ngIf="!i.paused" class="btn btn-sm btn-outline" title="Play">

@@ -17,6 +17,7 @@ export class MovieDetailComponent implements OnInit {
   private itemType = '';
 
   private itemId: any;
+  private children: any[];
   private info: {
     raw: any,
     watched: boolean,
@@ -137,13 +138,8 @@ export class MovieDetailComponent implements OnInit {
         }
       }
     })
-
-
   }
 
-  getChildren(){
-
-  }
   ngOnInit() {
 
     // Populate some default data

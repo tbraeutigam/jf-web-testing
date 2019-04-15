@@ -1,13 +1,13 @@
 <div class="content-container">
     <div class="content-area">
         <div class="clr-row">
-          <div class="clr-col-xl-3 clr-col-lg-4 clr-col-md-6 clr-col-12">
+          <div [ngClass]="state['subitems'] && state['subitems'] > 0 ? 'clr-col-xl-1 clr-col-lg-1 clr-col-md-3 clr-col-4' : 'clr-col-xl-3 clr-col-lg-4 clr-col-md-6 clr-col-12'">
             <div class="card">
               <div class="card-img"><img src="{{info.image}}"></div>
-              <div *ngIf="info.name != info.originalName" class="card-block">
+              <div *ngIf="!state['subitems'] || state['subitems'] == 0" class="card-block">
                 <div *ngIf="info.paused" class="progress"><progress value="{{info.progress}}" max="100"></progress></div>
-                <h4 class="card-title">{{info.originalName}}</h4>
-                <p class="card-text">Played: {{info.progress.toFixed()}}%</p>
+                <h4 *ngIf="info.name != info.originalName" class="card-title">{{info.originalName}}</h4>
+                <a *ngFor="let url of info.raw.ExternalUrls" href="{{url.URL}}" class="label">{{url.Name}}</a>
               </div>
             </div>
           </div>
@@ -59,16 +59,101 @@
               <span *ngFor="let loc of info.raw.ProductionLocations" class="label">{{loc}}</span>
               <span *ngFor="let studio of info.raw.Studios" class="label">{{studio.Name}}</span>
             </div>
-            <div>
+            <div *ngIf="state['subitems'] && state['subitems'] > 0">
+              <a *ngFor="let url of info.raw.ExternalUrls" href="{{url.URL}}" class="label">{{url.Name}}</a>
+            </div>
+            <div *ngIf="!state['subitems'] || state['subitems'] == 0">
               <h4>{{info.tagline}}</h4>
-              <span>{{info.description}}</span>
+              <p><span class="p2">Parental Rating: {{info.parentalRatings}}</span></p>
+              <p><span>{{info.description}}</span></p>
             </div>
           </div>
         </div>
-      <div class="clr-row">
-        <div class="clr-col"><h2>Staff</h2></div>
+      <ng-container *ngIf="seasons && seasons.length > 0">
+        <ng-container *ngFor="let season of seasons">
+          <ng-container *ngIf="state['displaySeason'] == season.id">
+            <div class="clr-row">
+              <div class="clr-col">
+                <h2>{{season.name}}</h2>
+              </div>
+            </div>
+            <div *ngFor="let episode of season.episodes" class="clr-row">
+              <div class="clr-col-xl-3 clr-col-lg-2 clr-col-md-4 clr-col-6">
+                <a class="card clickable">
+                  <div class="card-img"><img src="{{episode.image}}"></div>
+                  <div class="card-block">
+                    <div *ngIf="info.paused" class="progress"><progress value="{{episode.progress}}" max="100"></progress></div>
+                    <a *ngFor="let url of info.raw.ExternalUrls" href="{{url.URL}}" class="label">{{url.Name}}</a>
+                  </div>
+                </a>
+              </div>
+              <div class="clr-col-xl-6 clr-col-lg-6 clr-col-md-6 clr-col-12">
+                <h1>Episode {{episode.raw.IndexNumber}}: {{episode.name}}
+                  <ng-container *ngIf="episode.stars !== null">
+                      <clr-icon *ngFor="let i of arrayFor(episode.stars[0])" shape="star" class="is-solid"></clr-icon>
+                      <clr-icon *ngFor="let i of arrayFor(episode.stars[1])" shape="half-star" class="is-solid"></clr-icon>
+                      <clr-icon *ngFor="let i of arrayFor(episode.stars[2])" shape="star"></clr-icon>
+                  </ng-container>  
+                </h1>
+                  <div style="padding-bottom: .5rem">
+                    <!-- Action Buttons -->
+                    <button *ngIf="!info.paused" class="btn btn-sm btn-primary" title="Play">
+                      <clr-icon shape="play" class="is-solid"></clr-icon>
+                    </button>
+                    <button *ngIf="!info.paused" class="btn btn-sm" title="Edit">
+                        <clr-icon shape="pencil" class="is-solid"></clr-icon>
+                      </button>
+                    <button *ngIf="info.paused" class="btn btn-sm btn-primary" title="Resume">
+                      <clr-icon shape="play" class="is-solid"></clr-icon>
+                    </button>
+                    <button *ngIf="info.paused" class="btn btn-sm" title="Reset Progress">
+                      <clr-icon shape="stop" class="is-solid"></clr-icon>
+                    </button>
+                    <button class="btn btn-sm" title="Favorite">
+                      <clr-icon shape="heart" class="is-solid"></clr-icon>
+                    </button>
+                    <clr-dropdown>
+                      <button type="button" class="btn btn-sm btn-outline" title="More Actions" clrDropdownTrigger>
+                        <clr-icon shape="ellipsis-vertical"></clr-icon>
+                      </button>
+                      <clr-dropdown-menu *clrIfOpen>
+                        <label class="dropdown-header">More Actions</label>
+                        <button type="button" clrDropdownItem>Add to collection</button>
+                        <button type="button" clrDropdownItem>Add to playlist</button>
+                        <div class="dropdown-divider"></div>
+                        <button type="button" clrDropdownItem>Download</button>
+                        <button type="button" clrDropdownItem>Edit</button>
+                      </clr-dropdown-menu>
+                    </clr-dropdown>
+                    <div>
+                      <p><span>{{episode.description}}</span></p>
+                    </div>
+                  </div>
+              </div>
+            </div>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+      <ng-container *ngIf="!state['subitems'] || state['subitems'] == 0">
+        <div *ngIf="seasons && seasons.length > 0" class="clr-row">
+          <div class="clr-col"><h2>Seasons</h2></div>
+        </div>
+        <div *ngIf="seasons && seasons.length > 0" class="clr-row">
+          <div *ngFor="let season of seasons" class="clr-col-xl-2 clr-col-lg-2 clr-col-md-4 clr-col-6">
+            <a (click)="toggleState('season', season.id)" class="card clickable">
+              <div class="card-img"><img src="{{season.image}}"></div>
+              <div class="card-block">
+                <div *ngIf="info.paused" class="progress"><progress value="{{season.progress}}" max="100"></progress></div>
+                <h4 class="card-title">{{season.name}}</h4>
+              </div>
+            </a>
+          </div>
+        </div>
+      </ng-container>
+      <div *ngIf="state && state['cast']" class="clr-row">
+        <div  class="clr-col"><h2>Staff</h2></div>
       </div>
-      <div class="card-columns">
+      <div *ngIf="state && state['cast']" class="card-columns">
         <div *ngFor="let p of info.people" class="card">
             <div class="card-block">
                 <div class="card-media-block">
@@ -89,6 +174,11 @@
     </div>
   
     <clr-vertical-nav  [clr-nav-level]="2">
-      I'll Navigate!
+      <a clrVerticalNavLink [ngClass]="state['subitems'] && state['subitems'] > 0 ? '' : 'active'">
+      <clr-icon shape="film-strip"></clr-icon> Overview </a>
+      <a clrVerticalNavLink (click)="toggleState('cast')" [ngClass]="state['cast'] ? 'active' : ''">
+        <clr-icon shape="users"></clr-icon> Cast & Crew </a>
+      <div class="nav-divider"></div>
+      <a *ngFor="let season of seasons" [ngClass]="state['displaySeason'] == season.id ? 'active' : ''" (click)="toggleState('season', season.id)" clrVerticalNavLink><clr-icon shape="film-strip"></clr-icon> {{season.name}}</a> 
     </clr-vertical-nav>
   </div>

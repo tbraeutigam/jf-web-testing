@@ -21,6 +21,7 @@ const routes: Routes = [
   { path: 'tvshows', component: LibraryComponent, pathMatch: 'full' },
   { path: 'tvshows/libraries/:id', component: LibraryComponent, pathMatch: 'full' },
   { path: 'tvshows/detail/:id', component: SeriesDetailComponent, pathMatch: 'full'},
+  { path: 'tvshows/detail/:id/:season', component: SeriesDetailComponent, pathMatch: 'full'},
   { path: 'photos', component: LibraryComponent, pathMatch: 'full' },
   { path: 'photos/details/:id', component: PhotosDetailComponent, pathMatch: 'full'}
 ];
