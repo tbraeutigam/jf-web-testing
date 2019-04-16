@@ -74,12 +74,12 @@ export class SeriesDetailComponent implements OnInit {
       this.state['displaySeason'] = season;
     }
     else {
-      this.state[name] = !this.state[name];
       if (this.state[name]){
         this.state['subitems'] -= 1
       } else {
         this.state['subitems'] += 1
       }
+      this.state[name] = !this.state[name];
     }
     
   }

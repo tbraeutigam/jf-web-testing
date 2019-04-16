@@ -1,83 +1,109 @@
 <div class="content-container">
-    <div class="content-area">
-        <div class="clr-row">
-          <div [ngClass]="state['subitems'] && state['subitems'] > 0 ? 'clr-col-xl-1 clr-col-lg-1 clr-col-md-3 clr-col-4' : 'clr-col-xl-3 clr-col-lg-4 clr-col-md-6 clr-col-12'">
-            <div class="card">
-              <div class="card-img"><img src="{{info.image}}"></div>
-              <div *ngIf="!state['subitems'] || state['subitems'] == 0" class="card-block">
-                <div *ngIf="info.paused" class="progress"><progress value="{{info.progress}}" max="100"></progress></div>
-                <h4 *ngIf="info.name != info.originalName" class="card-title">{{info.originalName}}</h4>
-                <a *ngFor="let url of info.raw.ExternalUrls" href="{{url.URL}}" class="label">{{url.Name}}</a>
-              </div>
-            </div>
-          </div>
-        
-          <div class="clr-col-xl-6 clr-col-lg-6 clr-col-md-6 clr-col-12">
-            <h1>{{info.name}}
-              <ng-container *ngIf="info.stars !== null">
-                  <clr-icon *ngFor="let i of arrayFor(info.stars[0])" shape="star" class="is-solid"></clr-icon>
-                  <clr-icon *ngFor="let i of arrayFor(info.stars[1])" shape="half-star" class="is-solid"></clr-icon>
-                  <clr-icon *ngFor="let i of arrayFor(info.stars[2])" shape="star"></clr-icon>
-              </ng-container>  
-            </h1>
-    
-            <div style="padding-bottom: .5rem">
-              <!-- Action Buttons -->
-              <button *ngIf="!info.paused" class="btn btn-sm btn-primary" title="Play">
-                <clr-icon shape="play" class="is-solid"></clr-icon>
-              </button>
-              <button *ngIf="!info.paused" class="btn btn-sm" title="Edit">
-                  <clr-icon shape="pencil" class="is-solid"></clr-icon>
-                </button>
-              <button *ngIf="info.paused" class="btn btn-sm btn-primary" title="Resume">
-                <clr-icon shape="play" class="is-solid"></clr-icon>
-              </button>
-              <button *ngIf="info.paused" class="btn btn-sm" title="Reset Progress">
-                <clr-icon shape="stop" class="is-solid"></clr-icon>
-              </button>
-              <button class="btn btn-sm" title="Favorite">
-                <clr-icon shape="heart" class="is-solid"></clr-icon>
-              </button>
-              <clr-dropdown>
-                  <button type="button" class="btn btn-sm btn-outline" title="More Actions" clrDropdownTrigger>
-                    <clr-icon shape="ellipsis-vertical"></clr-icon>
-                  </button>
-                  <clr-dropdown-menu *clrIfOpen>
-                    <label class="dropdown-header">More Actions</label>
-                    <button type="button" clrDropdownItem>Add to collection</button>
-                    <button type="button" clrDropdownItem>Add to playlist</button>
-                    <div class="dropdown-divider"></div>
-                    <button type="button" clrDropdownItem>Download</button>
-                    <button type="button" clrDropdownItem>Edit</button>
-                  </clr-dropdown-menu>
-                </clr-dropdown>
-            </div>
-            <div>
-              <span class="label label-purple">{{info.years}} (Release)</span>
-              <span *ngFor="let genre of info.genres" class="label label-orange">{{genre}}</span>
-              <span *ngIf="info.hd" class="label label-blue">High Definition ({{info.resolution}})</span>
-              <span *ngFor="let loc of info.raw.ProductionLocations" class="label">{{loc}}</span>
-              <span *ngFor="let studio of info.raw.Studios" class="label">{{studio.Name}}</span>
-            </div>
-            <div *ngIf="state['subitems'] && state['subitems'] > 0">
-              <a *ngFor="let url of info.raw.ExternalUrls" href="{{url.URL}}" class="label">{{url.Name}}</a>
-            </div>
-            <div *ngIf="!state['subitems'] || state['subitems'] == 0">
-              <h4>{{info.tagline}}</h4>
-              <p><span class="p2">Parental Rating: {{info.parentalRatings}}</span></p>
-              <p><span>{{info.description}}</span></p>
-            </div>
+  <div class="content-area">
+    <div class="clr-row">
+      <div [ngClass]="state['subitems'] && state['subitems'] > 0 ? 'clr-col-xl-1 clr-col-lg-1 clr-col-md-3 clr-col-4' : 'clr-col-xl-3 clr-col-lg-4 clr-col-md-6 clr-col-12'">
+        <div class="card">
+          <div class="card-img"><img src="{{info.image}}"></div>
+          <div *ngIf="!state['subitems'] || state['subitems'] == 0" class="card-block">
+            <div *ngIf="info.paused" class="progress"><progress value="{{info.progress}}" max="100"></progress></div>
+            <h4 *ngIf="info.name != info.originalName" class="card-title">{{info.originalName}}</h4>
+            <a *ngFor="let url of info.raw.ExternalUrls" href="{{url.URL}}" class="label">{{url.Name}}</a>
           </div>
         </div>
+      </div>
+    
+      <div class="clr-col-xl-6 clr-col-lg-6 clr-col-md-6 clr-col-12">
+        <h1>{{info.name}}
+          <ng-container *ngIf="info.stars !== null">
+              <clr-icon *ngFor="let i of arrayFor(info.stars[0])" shape="star" class="is-solid"></clr-icon>
+              <clr-icon *ngFor="let i of arrayFor(info.stars[1])" shape="half-star" class="is-solid"></clr-icon>
+              <clr-icon *ngFor="let i of arrayFor(info.stars[2])" shape="star"></clr-icon>
+          </ng-container>  
+        </h1>
+
+        <div style="padding-bottom: .5rem">
+          <!-- Action Buttons -->
+          <button *ngIf="!info.paused" class="btn btn-sm btn-primary" title="Play">
+            <clr-icon shape="play" class="is-solid"></clr-icon>
+          </button>
+          <button *ngIf="!info.paused" class="btn btn-sm" title="Edit">
+              <clr-icon shape="pencil" class="is-solid"></clr-icon>
+            </button>
+          <button *ngIf="info.paused" class="btn btn-sm btn-primary" title="Resume">
+            <clr-icon shape="play" class="is-solid"></clr-icon>
+          </button>
+          <button *ngIf="info.paused" class="btn btn-sm" title="Reset Progress">
+            <clr-icon shape="stop" class="is-solid"></clr-icon>
+          </button>
+          <button class="btn btn-sm" title="Favorite">
+            <clr-icon shape="heart" class="is-solid"></clr-icon>
+          </button>
+          <clr-dropdown>
+              <button type="button" class="btn btn-sm btn-outline" title="More Actions" clrDropdownTrigger>
+                <clr-icon shape="ellipsis-vertical"></clr-icon>
+              </button>
+              <clr-dropdown-menu *clrIfOpen>
+                <label class="dropdown-header">More Actions</label>
+                <button type="button" clrDropdownItem>Add to collection</button>
+                <button type="button" clrDropdownItem>Add to playlist</button>
+                <div class="dropdown-divider"></div>
+                <button type="button" clrDropdownItem>Download</button>
+                <button type="button" clrDropdownItem>Edit</button>
+              </clr-dropdown-menu>
+            </clr-dropdown>
+        </div>
+        <div>
+          <span class="label label-purple">{{info.years}} (Release)</span>
+          <span *ngFor="let genre of info.genres" class="label label-orange">{{genre}}</span>
+          <span *ngIf="info.hd" class="label label-blue">High Definition ({{info.resolution}})</span>
+          <span *ngFor="let loc of info.raw.ProductionLocations" class="label">{{loc}}</span>
+          <span *ngFor="let studio of info.raw.Studios" class="label">{{studio.Name}}</span>
+        </div>
+        <div *ngIf="state['subitems'] && state['subitems'] > 0">
+          <a *ngFor="let url of info.raw.ExternalUrls" href="{{url.URL}}" class="label">{{url.Name}}</a>
+        </div>
+        <div *ngIf="!state['subitems'] || state['subitems'] == 0">
+          <h4>{{info.tagline}}</h4>
+          <p><span class="p2">Parental Rating: {{info.parentalRatings}}</span></p>
+          <p><span>{{info.description}}</span></p>
+        </div>
+      </div>
+    
+      <div class="clr-break-row"></div>
+
+      <ng-container *ngIf="state && state['cast']">
+          <div class="clr-col"><h2>Staff</h2></div>
+      </ng-container>
+    
+      <div class="clr-break-row"></div>
+
+      <div *ngIf="state && state['cast']" class="card-columns">
+        <div *ngFor="let p of info.people" class="card">
+            <div class="card-block">
+                <div class="card-media-block">
+                    <img *ngIf="p.PrimaryImageTag !== undefined" src="{{server}}/Items/{{p.Id}}/Images/Primary/0" class="card-media-image" style="height: auto !important; max-height: 4rem !important;">
+                    <div class="card-media-description">
+                        <span class="card-media-title .p2" style="font-weight: bold">
+                            {{p.Name}}
+                        </span>
+                        <span class="card-media-text"><ng-container *ngIf="p.Role && p.Role.match('(voice)') && p.Type == 'Actor'">Voice </ng-container> {{p.Type}} </span>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="p.Role" class="card-footer">
+                <span style="font-weight: bold">Role:</span> {{p.Role.replace('(voice)', '')}}
+            </div>
+        </div>
+      </div>
+
+      <div class="clr-break-row"></div>
+
       <ng-container *ngIf="seasons && seasons.length > 0">
         <ng-container *ngFor="let season of seasons">
           <ng-container *ngIf="state['displaySeason'] == season.id">
-            <div class="clr-row">
-              <div class="clr-col">
-                <h2>{{season.name}}</h2>
-              </div>
-            </div>
-            <div *ngFor="let episode of season.episodes" class="clr-row">
+            <div class="clr-col"><h2>{{season.name}}</h2></div>
+            <ng-container *ngFor="let episode of season.episodes">
+              <div class="clr-break-row"></div>
               <div class="clr-col-xl-3 clr-col-lg-2 clr-col-md-4 clr-col-6">
                 <a class="card clickable">
                   <div class="card-img"><img src="{{episode.image}}"></div>
@@ -130,15 +156,15 @@
                     </div>
                   </div>
               </div>
-            </div>
+            </ng-container>
           </ng-container>
         </ng-container>
       </ng-container>
       <ng-container *ngIf="!state['subitems'] || state['subitems'] == 0">
-        <div *ngIf="seasons && seasons.length > 0" class="clr-row">
+        <ng-container *ngIf="seasons && seasons.length > 0">
+          <div class="clr-break-row"></div>
           <div class="clr-col"><h2>Seasons</h2></div>
-        </div>
-        <div *ngIf="seasons && seasons.length > 0" class="clr-row">
+          <div class="clr-break-row"></div>
           <div *ngFor="let season of seasons" class="clr-col-xl-2 clr-col-lg-2 clr-col-md-4 clr-col-6">
             <a (click)="toggleState('season', season.id)" class="card clickable">
               <div class="card-img"><img src="{{season.image}}"></div>
@@ -148,31 +174,10 @@
               </div>
             </a>
           </div>
-        </div>
+        </ng-container>
       </ng-container>
-      <div *ngIf="state && state['cast']" class="clr-row">
-        <div  class="clr-col"><h2>Staff</h2></div>
-      </div>
-      <div *ngIf="state && state['cast']" class="card-columns">
-        <div *ngFor="let p of info.people" class="card">
-            <div class="card-block">
-                <div class="card-media-block">
-                    <img *ngIf="p.PrimaryImageTag !== undefined" src="{{server}}/Items/{{p.Id}}/Images/Primary/0" class="card-media-image" style="height: auto !important; max-height: 4rem !important;">
-                    <div class="card-media-description">
-                        <span class="card-media-title .p2" style="font-weight: bold">
-                            {{p.Name}}
-                        </span>
-                        <span class="card-media-text"><ng-container *ngIf="p.Role && p.Role.match('(voice)') && p.Type == 'Actor'">Voice </ng-container> {{p.Type}} </span>
-                    </div>
-                </div>
-            </div>
-            <div *ngIf="p.Role" class="card-footer">
-                <span style="font-weight: bold">Role:</span> {{p.Role.replace('(voice)', '')}}
-            </div>
-        </div>
-      </div>
     </div>
-  
+  </div>
     <clr-vertical-nav  [clr-nav-level]="2">
       <a clrVerticalNavLink [ngClass]="state['subitems'] && state['subitems'] > 0 ? '' : 'active'">
       <clr-icon shape="film-strip"></clr-icon> Overview </a>
